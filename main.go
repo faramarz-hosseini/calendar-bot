@@ -6,6 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/faramarz-hosseini/calendar-bot.git/cmd"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -16,22 +18,16 @@ func main() {
 	}
 	err = cli.Open()
 	if err != nil {
-		panic("could not listen for events")
+		fmt.Println(err)
+		return
 	}
-
-	cli.AddHandler(helloWorld)
+	
+	commands := cmd.InitializeBotCommands(cli)
+	defer cmd.DeactivateBotCommands(cli, commands)
 
 	fmt.Println("Bot is now running. Press CTRL-C to exit.")
     sc := make(chan os.Signal, 1)
     signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
     <-sc
 	cli.Close()
-}
-
-func helloWorld(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if s.State.User.ID == m.Author.ID {
-		return
-	}
-
-	s.ChannelMessageSend(m.ChannelID, "Hello World")
 }
