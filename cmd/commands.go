@@ -1,22 +1,10 @@
 package cmd
 
 import (
-	"context"
-	"fmt"
-
 	"github.com/bwmarrin/discordgo"
-	cal "google.golang.org/api/calendar/v3"
-	"google.golang.org/api/option"
-
-	"github.com/faramarz-hosseini/calendar-bot.git/Gcal"
 )
 
 var (
-	calendar = Gcal.InitClient()
-	calendarService, _ = cal.NewService(
-		context.Background(), option.WithHTTPClient(calendar),
-	)
-
 	defaultMemberPermissions int64   = discordgo.PermissionManageServer
 	integerMinVal            float64 = 0
 
@@ -39,7 +27,7 @@ var (
 					Type:        discordgo.ApplicationCommandOptionString,
 					Name:        "description",
 					Description: "Details of the event.",
-					Required:   true,
+					Required:    true,
 				},
 				{
 					Type:        discordgo.ApplicationCommandOptionInteger,
@@ -71,15 +59,7 @@ var (
 	}
 
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"credits": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			fmt.Println("I was called here")
-			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData{
-					Content: "CalendarAssistant is a helper bot made by a_walking_dead#9013.",
-				},
-			})
-		},
+		"credits": credits,
 		"new": setNewCalEvent,
 	}
 )
